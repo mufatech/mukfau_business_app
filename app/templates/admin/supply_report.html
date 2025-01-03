@@ -54,7 +54,12 @@
                                             <td class="cell">{{ supply.product.name }}</td>
                                             <td class="cell">{{ supply.quantity }} </td>
                                             <td class="cell">{{ supply.cost_per_unit }}</td>
-                                            <td class="cell">{{ supply.supply_cost * supply.cost_per_unit }}</td>  <!-- Display supply cost -->
+                                            <td class="cell">{% if supply.supply_cost is not none and supply.cost_per_unit is not none %}
+                                                {{ supply.supply_cost * supply.cost_per_unit }}
+                                            {% else %}
+                                                0
+                                            {% endif %}
+                                            </td>  <!-- Display supply cost -->
                                             <td>
                                                 <a href="{{ url_for('edit_supply', supply_id=supply.id) }}" class="btn btn-primary">Edit</a>
                                                 <form action="{{ url_for('delete_supply', supply_id=supply.id) }}" method="POST" style="display:inline;">

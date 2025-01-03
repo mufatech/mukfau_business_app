@@ -22,7 +22,10 @@ def supply_report():
 
     # Fetch filtered supplies
     supplies = query.order_by(Supply.date.desc()).all()
-    
+    for supply in supplies:
+        supply.supply_cost = supply.supply_cost or 0
+        supply.cost_per_unit = supply.cost_per_unit or 0
+        
     products = Product.query.all()
     total_stock_value = sum([product.stock_value() for product in products])
     

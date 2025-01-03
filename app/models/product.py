@@ -34,14 +34,14 @@ class Product(db.Model):
 class Supply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=True)
     quantity = db.Column(db.Float, nullable=False, default=0.0)
     cost_per_unit = db.Column(db.Float, nullable=False, default=0.0)
 
     product = db.relationship('Product', back_populates='supplies')
 
     supply_cost = db.Column(db.Float)
-    
+
     def __str__(self):
         return f"Supply(id={self.id}, product_id={self.product_id}, quantity={self.quantity})"
 

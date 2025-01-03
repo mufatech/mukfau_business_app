@@ -41,7 +41,7 @@
                                         <td class="cell">{{  "%.2f"|format(product.price) }} </td>
                                         <td class="cell">{{ product.stock }}</td>
                                         <!-- <td class="cell">{{ product.quantity_sold }}</td> -->
-                                        <td class="cell">${{ "%.2f"|format(product.stock_value()) }}</td>
+                                        <td class="cell">N{{ "%.2f"|format(product.stock_value()) }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -52,7 +52,7 @@
                 </div><!--//app-card-->
 
 <hr>
-<h2>Total Stock Value: ${{ "%.2f"|format(total_stock_value) }}</h2>
+<h2>Total Stock Value: N{{ "%.2f"|format(total_stock_value) }}</h2>
 
 
 
