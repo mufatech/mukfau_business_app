@@ -86,6 +86,14 @@
 </div>
 
 <script>
+     // Get today's date in the format yyyy-mm-dd
+     const today = new Date().toISOString().split('T')[0];
+
+    // Set the default value and max attribute for the Supply Date input
+    const dateInput = document.getElementById('date');
+    dateInput.value = today;
+    dateInput.max = today;
+    
     document.addEventListener('DOMContentLoaded', function () {
         const productEntries = document.getElementById('product-entries');
         const totalSaleAmountInput = document.getElementById('total_sale_amount');
