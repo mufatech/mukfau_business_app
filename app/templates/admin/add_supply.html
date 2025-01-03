@@ -1,0 +1,67 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Add Supply{% endblock %}
+
+{% block content %}
+
+<div class="app-wrapper">
+	    
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
+
+    <div class="app-card app-card-settings shadow-sm p-4">
+        <h2 class="page-title">Add New Supply</h2>
+         <!-- Display flash messages -->
+         {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="flash {{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('add_supply') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="date"> Supply Date:</label>
+                <input type="date" id="date" name="date" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="product_id">Select Product:</label><br>
+                <select id="product_id" name="product_id" required>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity Supply:</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">Cost Per Unit:</label>
+                <input type="number" id="cost_per_unit" name="cost_per_unit" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Supply</button>
+        </form>
+    </div>
+</div>
+</div>
+
+<script>
+    // Get today's date in the format yyyy-mm-dd
+    const today = new Date().toISOString().split('T')[0];
+
+    // Set the default value and max attribute for the Supply Date input
+    const dateInput = document.getElementById('date');
+    dateInput.value = today;
+    dateInput.max = today;
+</script>
+    
+{% endblock %}
+    

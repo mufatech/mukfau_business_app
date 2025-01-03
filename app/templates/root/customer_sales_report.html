@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report for {{ customer.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Sales Report for {{ customer.name }}</h1>
+
+    {% if sales %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Quantity Sold</th>
+                    <th>Price</th>
+                    <th>Total Amount</th>
+                    <th>Amount Paid</th>
+                    <th>Balance</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.transaction_id }}</td>
+                        <td>{{ sale.transaction.date }}</td>
+                        <td>{{ sale.product.name }}</td>
+                        <td>{{ sale.quantity_sold }}</td>
+                        <td>{{ sale.price }}</td>
+                        <td>{{ sale.total_amount }}</td>
+                        <td>{{ sale.transaction.amount_paid }}</td>
+                        <td>{{ sale.transaction.balance }}</td>
+                        <td>{{ sale.payment_method }}</td>
+                        <td>{{ sale.transaction.status }}</td>
+                        <td><a href="{{ url_for('transaction_details', transaction_id=sale.transaction_id) }}">View Transaction</a></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No sales records found for this customer.</td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No sales records found for this customer.</p>
+    {% endif %}
+    
+    <!-- <a href="{{ url_for('record_sale') }}">Back to Record Sale</a> -->
+</body>
+</html>

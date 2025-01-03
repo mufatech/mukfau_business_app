@@ -1,0 +1,39 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="app-wrapper">
+	    
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
+
+
+    <div class="app-card app-card-settings shadow-sm p-4">
+        <h4 class="card-title">Edit Product</h4>
+        <form method="POST" action="{{ url_for('edit_product', product_id=product.id ) }}" enctype="multipart/form-data"enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="product_name" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" class="form-control" id="price" name="price" value="{{ product.price }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity Supply</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ supply.quantity if supply else 0 }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required>{{ product.description }}</textarea>
+            </div>
+                    
+            <button type="submit" class="btn btn-primary">Update Product</button>
+        </form>
+    </div>
+
+
+    </div>
+    </div>
+{% endblock %}

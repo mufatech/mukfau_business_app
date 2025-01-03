@@ -1,0 +1,87 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="app-wrapper">
+
+<div class="app-content pt-3 p-md-3 p-lg-4">
+    <div class="container-xl">
+        
+        <div class="row g-3 mb-4 align-items-center justify-content-between">
+            <div class="col-auto">
+                <h1 class="app-page-title mb-0">Stock Balance</h1>
+            </div>
+            <div class="col-auto">
+                 <div class="page-utilities">
+                </div><!--//table-utilities-->
+            </div><!--//col-auto-->
+        </div><!--//row-->
+       
+        
+         
+        <div class="tab-content" id="orders-table-tab-content">
+            <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+                <div class="app-card app-card-orders-table shadow-sm mb-5">
+                    <div class="app-card-body">
+                        <div class="table-responsive">
+                            <table class="table app-table-hover mb-0 text-left">
+                                <thead>
+                                    <tr>
+                                        <th class="cell">Product Name</th>
+                                        <th class="cell">Price</th>
+                                        <!-- <th class="cell">Quantity Sold</th> -->
+                                        <th class="cell">Stock Balance</th>
+                                        <th class="cell">Stock Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products %}
+                                    <tr>
+                                        <td class="cell">{{ product.name }}</span></td>
+                                        <td class="cell">{{  "%.2f"|format(product.price) }} </td>
+                                        <td class="cell">{{ product.stock }}</td>
+                                        <!-- <td class="cell">{{ product.quantity_sold }}</td> -->
+                                        <td class="cell">${{ "%.2f"|format(product.stock_value()) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div><!--//table-responsive-->
+                       
+                    </div><!--//app-card-body-->		
+                </div><!--//app-card-->
+
+<hr>
+<h2>Total Stock Value: ${{ "%.2f"|format(total_stock_value) }}</h2>
+
+
+
+                
+                <nav class="app-pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav><!--//app-pagination-->
+                
+            </div><!--//tab-pane-->
+            
+    
+ 
+        
+        </div><!--//tab-content-->
+        
+        
+        
+    </div><!--//container-fluid-->
+</div><!--//app-content-->
+
+
+{% endblock %}

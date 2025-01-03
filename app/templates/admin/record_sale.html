@@ -1,0 +1,158 @@
+
+                    <div class="form-group">
+                        <label for="customer_name">Customer Name:</label>
+                        <input type="text" id="customer_name" name="customer_name" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Sales Date:</label>
+                        <input type="datetime-local" id="date" name="date" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product_id">Select Product:</label>
+                        <select id="product_id" name="product_id" class="form-control" required>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity_sold">Quantity Sold:</label>
+                        <input type="number" id="quantity_sold" name="quantity_sold" min="1" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Selling Price:</label>
+                        <input type="number" id="price" name="price" min="1" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment_method">Payment Method:</label>
+                        <select id="payment_method" name="payment_method" class="form-control" required>
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="cash">Cash</option>
+                            <option value="transfered">Transferred</option>
+                            <option value="not_paid">Not Paid</option>
+                        </select>
+                    </div>
+
+                    <!-- <div class="form-group">
+                        <label>Status:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="status_pending" name="status" value="Pending" checked>
+                            <label class="form-check-label" for="status_pending">Pending</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="status_completed" name="status" value="Completed">
+                            <label class="form-check-label" for="status_completed">Completed</label>
+                        </div>
+                    </div> -->
+
+                    <button type="submit" class="btn btn-primary">Add Sales</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-product').addEventListener('click', function() {
+        const productEntry = document.querySelector('.product-entry');
+        const clone = productEntry.cloneNode(true);
+        document.getElementById('products').appendChild(clone);
+    });
+
+    // Get today's date in the format yyyy-MM-ddTHH:mm
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm format
+
+    // Set default value and max for the datetime-local input
+    const dateInput = document.getElementById('date');
+    dateInput.value = formattedDate;
+    dateInput.max = formattedDate;
+</script>
+{% endblock %}
+
+<!-- {% extends 'admin/base.html' %}
+
+{% block title %}Add Sales{% endblock %}
+
+{% block content %}
+
+<div class="app-wrapper">
+	    
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
+
+    <div class="app-card app-card-settings shadow-sm p-4">
+        <h2 class="page-title">Sales Record</h2>
+        <form method="POST" action="{{ url_for('record_sale') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="date"> Sales Date:</label>
+                <input type="datetime-local" id="date" name="date" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="product_id">Select Product:</label><br>
+                <select id="product_id" name="product_id" required>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity Sold:</label>
+                <input type="number" id="quantity_sold" name="quantity_sold"  min="1" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Price:</label>
+                <input type="number" id="price" name="price"  min="1" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment_method">Payment Method:</label><br>
+                <select style="font-size: 18px;" id="payment_method" name="payment_method"  min="1" class="form-control" required>
+                    <option value="" disabled selected>Select Option</option>
+                    <option value="cash">Cash</option>
+                    <option value="transfered">Transfered</option>
+                    <option value="not_paid">Not paid</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="status">Status</label><br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="status_pending" name="status" value="Pending"  min="1" class="form-control" checked>
+                        <label class="form-check-label" for="status_pending">Pending</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="status_completed" name="status" value="Completed"  min="1" class="form-control">
+                        <label class="form-check-label" for="status_completed">Completed</label>
+                    </div>
+            </div>
+            
+           <button type="submit" class="btn btn-primary">Add Sales</button>
+        </form>
+    </div>
+</div>
+</div>
+
+<script>
+    // Get today's date in the format yyyy-MM-ddTHH:mm
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm format
+
+    // Set default value and max for the datetime-local input
+    const dateInput = document.getElementById('date');
+    dateInput.value = formattedDate;
+    dateInput.max = formattedDate;
+</script>
+
+{% endblock %}
+
+
+ --> -->

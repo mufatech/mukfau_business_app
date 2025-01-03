@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Transaction Details</h1>
+
+    <h3>Customer Information</h3>
+    <p><strong>Name:</strong> {{ customer.name }}</p>
+    <p><strong>Email:</strong> {{ customer.email if customer.email else 'N/A' }}</p>
+    <p><strong>Phone:</strong> {{ customer.phone if customer.phone else 'N/A' }}</p>
+
+    <h3>Transaction Information</h3>
+    <p><strong>Transaction ID:</strong> {{ transaction.id }}</p>
+    <p><strong>Date:</strong> {{ transaction.date }}</p>
+    <p><strong>Status:</strong> {{ transaction.status }}</p>
+    <p><strong>Total Amount:</strong> {{ transaction.total_amount }}</p>
+    <p><strong>Amount Paid:</strong> {{ transaction.amount_paid }}</p>
+    <p><strong>Balance:</strong> {{ transaction.balance }}</p>
+
+    <h3>Sale Items</h3>
+    {% if sales %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity Sold</th>
+                    <th>Price</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.product.name }}</td>
+                        <td>{{ sale.quantity_sold }}</td>
+                        <td>{{ sale.price }}</td>
+                        <td>{{ sale.total_amount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No items found for this transaction.</p>
+    {% endif %}
+
+    <a href="{{ url_for('sales_report') }}">Back to Sales Report</a>
+</body>
+</html>

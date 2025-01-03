@@ -1,0 +1,116 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="app-wrapper">
+
+<div class="app-content pt-3 p-md-3 p-lg-4">
+    <div class="container-xl">
+        
+        <div class="row g-3 mb-4 align-items-center justify-content-between">
+            <div class="col-auto">
+                <h1 class="app-page-title mb-0">Sales Transactions Report</h1>
+            </div>
+            <div class="col-auto">
+                 <div class="page-utilities">
+                </div><!--//table-utilities-->
+            </div><!--//col-auto-->
+        </div><!--//row-->
+       
+        
+        <form method="GET" action="{{ url_for('sales_report') }}">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            <button type="submit">Filter</button>
+        </form>
+
+        <h2>Total Stock Value: {{ total_stock_value }}</h2>
+
+        <div class="tab-content" id="orders-table-tab-content">
+            <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+                <div class="app-card app-card-orders-table shadow-sm mb-5">
+                    <div class="app-card-body">
+                        <div class="table-responsive">
+                            <table class="table app-table-hover mb-0 text-left">
+                                <thead>
+                                    <tr>
+                                        <!-- <th class="cell">S/N</th> -->
+                                        <th class="cell">Transaction ID</th>
+                                        <th class="cell">Date</th>
+                                        <th class="cell">Total Amount</th>
+                                        <th class="cell">Amount Paid</th>
+                                        <th class="cell">Balance</th>
+                                        <th class="cell">Status</th>
+                                        <!-- <th class="cell">Action</th> -->
+                                        <!-- <th class="cell">Total Value</th> -->
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sale in sales %}
+                                    <tr>
+                                        <td class="cell">{{ sale.transaction_id }}</td>
+                                        <td class="cell">{{ sale.transaction.date.strftime('%Y-%m-%d') }}</td>
+                                        <td class="cell">{{ sale.transaction.total_amount }}</td>
+                                        <td class="cell">{{ sale.transaction.amount_paid }} </td>
+                                        <td class="cell">{{ sale.transaction.balance }}</td>
+                                        <td class="cell">{{ sale.transaction.status }} </td>
+                                        <td>
+                                            <a href="{{ url_for('transaction_details', transaction_id=transaction.id) }}">View Details</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div><!--//table-responsive-->
+                       
+                    </div><!--//app-card-body-->		
+                </div><!--//app-card-->
+
+
+
+                
+                <nav class="app-pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav><!--//app-pagination-->
+                
+            </div><!--//tab-pane-->
+            
+    
+ 
+        
+        </div><!--//tab-content-->
+        
+        
+        
+    </div><!--//container-fluid-->
+</div><!--//app-content-->
+
+
+
+<script>
+    // Get today's date in the format yyyy-mm-dd
+    const today = new Date().toISOString().split('T')[0];
+
+    // Set the max attribute for the date input fields
+    document.getElementById('start_date').max = today;
+    document.getElementById('end_date').max = today;
+
+    // Optionally set the default value for end_date to today's date
+    document.getElementById('end_date').value = today;
+</script>
+
+{% endblock %}
+

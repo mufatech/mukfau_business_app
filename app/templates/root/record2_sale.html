@@ -1,0 +1,105 @@
+{% extends 'root/base.html' %}
+
+{% block title %}Add Sales{% endblock %}
+
+{% block content %}
+
+<div class="app-wrapper">
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
+            <div class="app-card app-card-settings shadow-sm p-4">
+                <h2 class="page-title">Sales Record</h2>
+                <form method="POST" action="{{ url_for('record_sale') }}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="date"> Sales Date:</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer_name">Customer Name:</label>
+                        <input type="text" id="customer_name" name="customer_name" class="form-control" required>
+                    </div>
+
+                    <!-- Container for multiple product entries -->
+                    <div id="product-entries">
+                        <!-- Initial Product Entry -->
+                        <div class="product-entry row mb-3">
+                            <div class="col-md-4">
+                                <label for="product_id">Select Product:</label>
+                                <select name="product_id[]" class="form-control" required>
+                                    {% for product in products %}
+                                    <option value="{{ product.id }}">{{ product.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="quantity_sold">Quantity:</label>
+                                <input type="number" name="quantity_sold[]" min="1" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="price">Price:</label>
+                                <input type="number" name="price[]" min="1" class="form-control" required>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-product">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" id="add-product" class="btn btn-secondary">Add Another Product</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount_paid">Amount Paid:</label>
+                        <input type="number" step="0.01" id="amount_paid" name="amount_paid" min="0" class="form-control" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="payment_method">Payment Method:</label><br>
+                        <select id="payment_method" name="payment_method" class="form-control" required>
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="cash">Cash</option>
+                            <option value="transfered">Transferred</option>
+                            <option value="not_paid">Not Paid</option>
+                        </select><br>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Record Sale</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-product').addEventListener('click', function () {
+        const productEntries = document.getElementById('product-entries');
+        const firstProductEntry = document.querySelector('.product-entry');
+        const newEntry = firstProductEntry.cloneNode(true);
+
+        // Clear input values in the new entry
+        newEntry.querySelectorAll('input').forEach(input => input.value = '');
+        productEntries.appendChild(newEntry);
+    });
+
+    document.getElementById('product-entries').addEventListener('click', function (event) {
+        if (event.target.classList.contains('remove-product')) {
+            const productEntry = event.target.closest('.product-entry');
+            const allEntries = document.querySelectorAll('.product-entry');
+            
+            // Prevent removing the last remaining product entry
+            if (allEntries.length > 1) {
+                productEntry.remove();
+            }
+        }
+    });
+
+    // Set default and max dates for the date input
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('date');
+    dateInput.value = today;
+    dateInput.max = today;
+</script>
+
+{% endblock %}

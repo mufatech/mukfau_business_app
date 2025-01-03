@@ -1,0 +1,110 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+<div class="app-wrapper">
+
+<div class="app-content pt-3 p-md-3 p-lg-4">
+    <div class="container-xl">
+        
+        <div class="row g-3 mb-4 align-items-center justify-content-between">
+            <div class="col-auto">
+                <h1 class="app-page-title mb-0">Profit</h1>
+            </div>
+            <div class="col-auto">
+                 <div class="page-utilities">
+                </div><!--//table-utilities-->
+            </div><!--//col-auto-->
+        </div><!--//row-->
+
+        <form method="GET" action="{{ url_for('profit') }}">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            <button type="submit">Filter</button>
+        </form>
+       
+        
+         
+        <div class="tab-content" id="orders-table-tab-content">
+            <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+                <div class="app-card app-card-orders-table shadow-sm mb-5">
+                    <div class="app-card-body">
+                        <div class="table-responsive">
+                            <table class="table app-table-hover mb-0 text-left">
+                                <thead>
+                                    <tr>
+                                        
+                                        <th class="cell">Product Name</th>
+                                        <th class="cell">Quantity Sold</th>
+                                        <th class="cell">Selling Price</th>
+                                        <th class="cell">Cost Price</th>
+                                        <th class="cell">Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    {% for profit in profits %}
+                                    <tr>
+                                        
+                                        <td class="cell">{{ profit.product.name }}</span></td>
+                                        <td class="cell">{{ profit.quantity_sold }} </td>
+                                        <td class="cell">{{ profit.selling_price }}</td>
+                                        <td class="cell">{{ profit.cost_price }}</td>
+                                        <td class="cell">{{ profit.profit }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div><!--//table-responsive-->
+                       
+                    </div><!--//app-card-body-->		
+                </div><!--//app-card-->
+
+<hr>
+<h2>Total Profit: {{ total_profit }}</h2>
+
+
+
+                
+                <nav class="app-pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav><!--//app-pagination-->
+                
+            </div><!--//tab-pane-->
+            
+    
+ 
+        
+        </div><!--//tab-content-->
+        
+        
+        
+    </div><!--//container-fluid-->
+</div><!--//app-content-->
+
+
+<script>
+    // Get today's date in the format yyyy-mm-dd
+    const today = new Date().toISOString().split('T')[0];
+
+    // Set the max attribute for the date input fields
+    document.getElementById('start_date').max = today;
+    document.getElementById('end_date').max = today;
+
+    // Optionally set the default value for end_date to today's date
+    document.getElementById('end_date').value = today;
+</script>
+
+{% endblock %}

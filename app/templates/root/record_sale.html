@@ -1,0 +1,162 @@
+<!-- {% extends 'root/base.html' %} -->
+
+{% block title %}Add Sales{% endblock %}
+
+{% block content %}
+
+<div class="app-wrapper">
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
+            <div class="app-card app-card-settings shadow-sm p-4">
+                <h2 class="page-title">Sales Record</h2>
+                <form method="POST" action="{{ url_for('record_sale') }}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="date"> Sales Date:</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer_name">Customer Name:</label>
+                        <input type="text" id="customer_name" name="customer_name" class="form-control" required>
+                    </div>
+
+                    <!-- Container for multiple product entries -->
+                    <div id="product-entries">
+                        <!-- Initial Product Entry -->
+                        <div class="product-entry row mb-3">
+                            <div class="col-md-3">
+                                <label for="product_id">Product:</label>
+                                <select name="product_id[]" class="form-control product-select" required>
+                                    {% for product in products %}
+                                    <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="quantity_sold">Quantity:</label>
+                                <input type="number" name="quantity_sold[]" class="form-control quantity-input" min="1" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="price">Price:</label>
+                                <input type="number" name="price[]" class="form-control price-input">
+                            </div>
+                            <div class="col-md-2">
+                                <label>Total Amount:</label>
+                                <input type="number" class="form-control total-amount-input" readonly>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-product">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add-product" class="btn btn-secondary mb-3">Add Another Product</button>
+
+                    <!-- Total Amount and Balance -->
+                    <div class="form-group">
+                        <label for="total_sale_amount">Total Sale Amount:</label>
+                        <input type="number" id="total_sale_amount" name="total_sale_amount" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount_paid">Amount Paid:</label>
+                        <input type="number" id="amount_paid" name="amount_paid" class="form-control" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="balance">Balance:</label>
+                        <input type="number" id="balance" name="balance" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="payment_method">Payment Method:</label>
+                        <select id="payment_method" name="payment_method" class="form-control" required>
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="cash">Cash</option>
+                            <option value="transferred">Transferred</option>
+                            <option value="not_paid">Not Paid</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Record Sale</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const productEntries = document.getElementById('product-entries');
+        const totalSaleAmountInput = document.getElementById('total_sale_amount');
+        const amountPaidInput = document.getElementById('amount_paid');
+        const balanceInput = document.getElementById('balance');
+
+        // Calculate totals whenever price or quantity changes
+        function calculateTotals() {
+            let totalSaleAmount = 0;
+
+            document.querySelectorAll('.product-entry').forEach(entry => {
+                const quantity = parseFloat(entry.querySelector('.quantity-input').value) || 0;
+                const price = parseFloat(entry.querySelector('.price-input').value) || 0;
+                const totalAmountInput = entry.querySelector('.total-amount-input');
+
+                const totalAmount = quantity * price;
+                totalAmountInput.value = totalAmount.toFixed(2);
+
+                totalSaleAmount += totalAmount;
+            });
+
+            totalSaleAmountInput.value = totalSaleAmount.toFixed(2);
+            calculateBalance();
+        }
+
+        // Calculate balance based on total sale amount and amount paid
+        function calculateBalance() {
+            const totalSaleAmount = parseFloat(totalSaleAmountInput.value) || 0;
+            const amountPaid = parseFloat(amountPaidInput.value) || 0;
+            const balance = totalSaleAmount - amountPaid;
+
+            balanceInput.value = balance.toFixed(2);
+        }
+
+        // Event listener for changes in product entries
+        productEntries.addEventListener('input', function (event) {
+            const target = event.target;
+
+            if (target.classList.contains('quantity-input') || target.classList.contains('price-input')) {
+                // Recalculate totals when quantity or price is updated
+                calculateTotals();
+            }
+        });
+
+        // Add a new product entry
+        document.getElementById('add-product').addEventListener('click', function () {
+            const firstProductEntry = document.querySelector('.product-entry');
+            const newEntry = firstProductEntry.cloneNode(true);
+
+            newEntry.querySelectorAll('input').forEach(input => input.value = '');
+            newEntry.querySelector('.product-select').value = '';
+            productEntries.appendChild(newEntry);
+        });
+
+        // Remove a product entry
+        productEntries.addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-product')) {
+                const productEntry = event.target.closest('.product-entry');
+                if (document.querySelectorAll('.product-entry').length > 1) {
+                    productEntry.remove();
+                    calculateTotals();
+                }
+            }
+        });
+
+        // Event listener for amount paid input to update balance
+        amountPaidInput.addEventListener('input', calculateBalance);
+    });
+
+</script>
+
+{% endblock %}
+
+    

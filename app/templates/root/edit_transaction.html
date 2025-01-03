@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Transaction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Edit Transaction</h2>
+
+        <form method="POST" action="{{ url_for('edit_transaction', transaction_id=transaction.id) }}">
+            <!-- Transaction Details -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="total_amount" class="form-label">Total Amount:</label>
+                    <input type="number" id="total_amount" name="total_amount" class="form-control" 
+                           value="{{ transaction.total_amount }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="amount_paid" class="form-label">Amount Paid:</label>
+                    <input type="number" id="amount_paid" name="amount_paid" class="form-control" 
+                           value="{{ transaction.amount_paid }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="balance" class="form-label">Balance:</label>
+                    <input type="number" id="balance" name="balance" class="form-control" 
+                           value="{{ transaction.balance }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="status" class="form-label">Status:</label>
+                    <input type="text" id="status" name="status" class="form-control" 
+                           value="{{ transaction.status }}" readonly>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Update Transaction</button>
+                <a href="{{ url_for('sales_page') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Auto-update the balance dynamically as the user updates "amount_paid"
+        document.addEventListener('DOMContentLoaded', function () {
+            const amountPaidInput = document.getElementById('amount_paid');
+            const totalAmountInput = document.getElementById('total_amount');
+            const balanceInput = document.getElementById('balance');
+            const statusInput = document.getElementById('status');
+
+            amountPaidInput.addEventListener('input', function () {
+                const totalAmount = parseFloat(totalAmountInput.value) || 0;
+                const amountPaid = parseFloat(amountPaidInput.value) || 0;
+                const balance = totalAmount - amountPaid;
+
+                balanceInput.value = balance.toFixed(2);
+
+                // Update status based on the balance
+                if (balance <= 0) {
+                    statusInput.value = "Completed";
+                } else {
+                    statusInput.value = "Pending";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
