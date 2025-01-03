@@ -121,11 +121,17 @@ def supply_cost(self):
 @app.route('/stock-balance')
 def stock_balance():
     products = Product.query.all()
-    sale = Sale.query.all()
+    #sale = Sale.query.all()
+
+    # Get the page number from the query parameters (default to 1 if not provided)
+    page = request.args.get('page', 1, type=int)
+
+    # Fetch the products with pagination
+    products = Product.query.paginate(page=page, per_page=15, error_out=False)
 
     # Calculate stock value for all products
-    total_stock_value = sum([product.stock_value() for product in products])
-    return render_template('admin/stock_balance.html', products=products, total_stock_value=total_stock_value, sale=sale)
+    total_stock_value = sum([product.stock_value() for product in products.items])
+    return render_template('admin/stock_balance.html', products=products, total_stock_value=total_stock_value)
 
 
 
