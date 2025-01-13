@@ -68,7 +68,7 @@ class Expenses(db.Model):
     date = db.Column(db.Date, default=datetime.utcnow().date)
     amount = db.Column(db.Float, nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
     # product = db.relationship('Product', backref='expenses')
     def __repr__(self):

@@ -28,6 +28,7 @@
                                 <table class="table app-table-hover mb-0 text-left">
                                     <thead>
                                         <tr>
+                                            <th class="cell">ID</th>
                                             <th class="cell">Date</th>
                                             <th class="cell">Amount</th>
                                             <th class="cell">Purpose</th>
@@ -35,10 +36,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for expense in expenses %}
+                                        {% for expense in expenses.items %}
                                         <tr>
+                                            <td class="cell">{{ expense.id }}</td>
                                             <td class="cell">{{ expense.date.strftime('%Y-%m-%d') }}</td>
-                                            <td class="cell">₦{{ expense.amount | round(2) }}</td>
+                                            <td class="cell">₦{{ expense.amount }}</td>
                                             <td class="cell">{{ expense.purpose }}</td>
                                             <td class="cell">{{ expense.product.name if expense.product else 'N/A' }}</td>
                                         </tr>
@@ -55,22 +57,19 @@
                     <hr>
                     <h2>Total Expenses Value: ₦{{ total_expenses_value | round(2) }}</h2>
 
-                    <!-- Pagination Controls -->
-                    <nav class="app-pagination">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
-                                <a class="page-link" href="{{ url_for('view_expenses', page=pagination.page - 1, start_date=start_date, end_date=end_date) }}" {% if pagination.page == 1 %}tabindex="-1" aria-disabled="true"{% endif %}>Previous</a>
-                            </li>
-                            {% for p in pagination.iter_pages() %}
-                            <li class="page-item {% if p == pagination.page %}active{% endif %}">
-                                <a class="page-link" href="{{ url_for('view_expenses', page=p, start_date=start_date, end_date=end_date) }}">{{ p }}</a>
-                            </li>
-                            {% endfor %}
-                            <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
-                                <a class="page-link" href="{{ url_for('view_expenses', page=pagination.page + 1, start_date=start_date, end_date=end_date) }}" {% if pagination.page == pagination.pages %}tabindex="-1" aria-disabled="true"{% endif %}>Next</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    
+                    <!-- Pagination controls -->
+                    <div>
+                        {% if expenses.has_prev %}
+                            <a href="{{ url_for('view_expenses', page=expenses.prev_num) }}">Previous</a>
+                        {% endif %}
+                        
+                        <span>Page {{ expenses.page }} of {{ expenses.pages }}</span>
+                        
+                        {% if expenses.has_next %}
+                            <a href="{{ url_for('view_expenses', page=expenses.next_num) }}">Next</a>
+                        {% endif %}
+                    </div> 
                 </div>
             </div>
         </div>
