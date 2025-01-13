@@ -1,20 +1,59 @@
-<form method="POST" action="{{ url_for('add_expenses') }}">
-    <label for="date">Date:</label>
-    <input type="date" id="date" name="date" value="{{ today }}" required>
+{% extends 'root/base.html' %}
 
-    <label for="product_id">Product:</label>
-    <select id="product_id" name="product_id" required>
-        <option value="">Select Product</option>
-        {% for product in products %}
-            <option value="{{ product.id }}">{{ product.name }}</option>
-        {% endfor %}
-    </select>
+{% block title %}Expenses{% endblock %}
 
-    <label for="amount">Amount:</label>
-    <input type="number" id="amount" name="amount" step="0.01" required>
+{% block content %}
 
-    <label for="purpose">Purpose:</label>
-    <textarea id="purpose" name="purpose" required></textarea>
+<div class="app-wrapper">
+	    
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
 
-    <button type="submit">Add Expense</button>
-</form>
+    <div class="app-card app-card-settings shadow-sm p-4">
+        <h2 class="page-title">Add Expenses</h2>
+        <form method="POST" action="{{ url_for('add_expenses') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount </label>
+                <input type="number" id="amount" name="amount"  min="1" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="purpose">Purpose:</label>
+                <input type="test" id="purpose" name="purpose"  min="1" class="form-control" required>
+            </div>
+
+            <div class="form-group mb-3 d-flex align-items-center">
+                <label for="product_id" class="form-label me-3">Select Product:</label>
+                <select id="product_id" name="product_id" class="form-control" required>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }} (Stock: {{ product.stock }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+           
+            
+           <button type="submit" class="btn btn-primary">Add Expenses</button>
+        </form>
+    </div>
+</div>
+</div>
+
+<script>
+    // Get today's date in the format yyyy-mm-dd
+    const today = new Date().toISOString().split('T')[0];
+
+    // Set the default value and max attribute for the Supply Date input
+    const dateInput = document.getElementById('date');
+    dateInput.value = today;
+    dateInput.max = today;
+</script>
+
+{% endblock %}
+
+
+

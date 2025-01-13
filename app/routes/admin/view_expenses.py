@@ -4,18 +4,30 @@ from app import app, db
 from app.models.product import Product, Expenses
 from datetime import datetime
 
-@app.route('/view_expenses', methods=['GET'])
+@app.route('/view_expenses')
 @login_required
-
 def view_expenses():
     page = request.args.get('page', 1, type=int)
-    expenses_paginated = Expenses.query.order_by(Expenses.date.desc()).paginate(page=page, per_page=10)
     
+    # Get filter dates if they exist
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    query = Expenses.query.order_by(Expenses.date.desc())
+    
+    if start_date and end_date:
+        query = query.filter(Expenses.date >= start_date, Expenses.date <= end_date)
+    
+    expenses_paginated = query.paginate(page=page, per_page=10)
 
-    
-    # Calculate the total expenses value
-    total_expenses_value = sum(expense.amount for expense in Expenses.query.all())
+    # Calculate the total expenses
+    total_expenses_value = sum(expense.amount for expense in expenses_paginated.items)
 
-    #total_expenses_value = db.session.query(db.func.sum(Expenses.amount)).scalar() or 0
-    
-    return render_template('admin/view_expenses.html', expenses=expenses_paginated.items, pagination=expenses_paginated, total_expenses_value=total_expenses_value)
+    return render_template(
+        'admin/view_expenses.html', 
+        expenses=expenses_paginated.items,  # Pass the list of expenses
+        pagination=expenses_paginated,     # Pass pagination object for navigation
+        total_expenses_value=total_expenses_value,
+        start_date=start_date,
+        end_date=end_date
+    )

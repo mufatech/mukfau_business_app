@@ -36,7 +36,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for expense in expenses.items %}
+                                        {% for expense in expenses %}
                                         <tr>
                                             <td class="cell">{{ expense.id }}</td>
                                             <td class="cell">{{ expense.date.strftime('%Y-%m-%d') }}</td>
@@ -55,21 +55,20 @@
                     </div>
                     
                     <hr>
-                    <h2>Total Expenses Value: ₦{{ total_expenses_value | round(2) }}</h2>
+                    <h2>Total Expenses Value: ₦{{ total_expenses_value | default(0) | round(2) }}</h2>
 
-                    
                     <!-- Pagination controls -->
                     <div>
-                        {% if expenses.has_prev %}
-                            <a href="{{ url_for('view_expenses', page=expenses.prev_num) }}">Previous</a>
+                        {% if pagination.has_prev %}
+                            <a href="{{ url_for('view_expenses', page=pagination.prev_num, start_date=start_date, end_date=end_date) }}">Previous</a>
                         {% endif %}
                         
-                        <span>Page {{ expenses.page }} of {{ expenses.pages }}</span>
+                        <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
                         
-                        {% if expenses.has_next %}
-                            <a href="{{ url_for('view_expenses', page=expenses.next_num) }}">Next</a>
+                        {% if pagination.has_next %}
+                            <a href="{{ url_for('view_expenses', page=pagination.next_num, start_date=start_date, end_date=end_date) }}">Next</a>
                         {% endif %}
-                    </div> 
+                    </div>
                 </div>
             </div>
         </div>

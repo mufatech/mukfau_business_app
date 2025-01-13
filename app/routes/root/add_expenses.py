@@ -53,4 +53,4 @@ def add_expenses():
     # GET request: Render the form
     products = Product.query.all()
     today = datetime.utcnow().strftime('%Y-%m-%d')
-    return render_template('admin/view_expenses.html', products=products, today=today)
+    return render_template('root/expenses.html', products=products, today=today)
