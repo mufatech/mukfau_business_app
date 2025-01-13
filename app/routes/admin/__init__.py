@@ -7,4 +7,4 @@ from .edit_product import edit_product
 from .edit_products import edit_products
 from .record_sale import record_sale, transaction_details, sale_value
 from .edit_supply import edit_supply, delete_supply
-from .view_expenses import view_expenses, expenses_value
+from .view_expenses import view_expenses, expenses

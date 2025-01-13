@@ -38,6 +38,15 @@ def record_sale():
             db.session.add(customer)
             db.session.commit()
 
+        # Generate a unique transaction reference
+        transaction_ref = f"{customer.id}-{date}-{total_amount}"
+
+        # Check for duplicate transaction
+        existing_transaction = Transaction.query.filter_by(transaction_ref=transaction_ref).first()
+        if existing_transaction:
+            flash('Duplicate transaction detected. Sale not recorded.', 'error')
+            return redirect(url_for('record_sale'))
+        
         # Save transaction
         transaction = Transaction(
             date=date,
@@ -45,7 +54,8 @@ def record_sale():
             total_amount=total_amount, 
             amount_paid=amount_paid, 
             balance=balance, 
-            status=status
+            status=status,
+            transaction_ref=transaction_ref
         )
         db.session.add(transaction)
         db.session.commit()

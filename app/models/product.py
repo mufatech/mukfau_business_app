@@ -16,9 +16,10 @@ class Product(db.Model):
     supplies = db.relationship('Supply', back_populates='product', lazy='dynamic')
     expenses = db.relationship('Expenses', backref='product', lazy=True)
 
-    def expenses_value(self):
+    def total_expenses_value(self):
+        # This method calculates the total expenses for this product
         return db.session.query(db.func.sum(Expenses.amount)).filter(Expenses.product_id == self.id).scalar() or 0.0
-
+    
     @property
     def latest_cost_per_unit(self):
         latest_supply = db.session.query(Supply).filter(Supply.product_id == self.id).order_by(Supply.date.desc()).first()
@@ -49,7 +50,7 @@ class Sale(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, default=datetime.utcnow)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), nullable=False)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), unique=True, nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id', ondelete='SET NULL'), nullable=True)
     quantity_sold = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -71,6 +72,10 @@ class Expenses(db.Model):
     purpose = db.Column(db.String(255), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
+    # product = db.relationship('Product', backref='expenses')
+    def __repr__(self):
+        return f'<Expense {self.id} - {self.purpose}>'
+    
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -80,6 +85,7 @@ class Transaction(db.Model):
     amount_paid = db.Column(db.Float, nullable=False, default=0.0)
     balance = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), nullable=False, default="Pending")
+    transaction_ref = db.Column(db.String(50), unique=True, nullable=False)  # Unique reference
 
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)

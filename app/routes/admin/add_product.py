@@ -81,42 +81,7 @@ def add_supply():
 
 def supply_cost(self):
         return self.quantity * self.cost_per_unit
-# @app.route('/record-sale', methods=['GET', 'POST'])
-# def record_sale():
-#     if request.method == 'POST':
-#         date = request.form.get('date')  # Get date from form
-#         product_id = int(request.form['product_id'])
-#         quantity_sold = float(request.form['quantity_sold'])
-#         price = float(request.form['price'])
-        
-#         if not date:
-#             date = datetime.utcnow().date()  # Default to today if no date provided
-#         else:
-#             date = datetime.strptime(date, '%Y-%m-%d').date()
 
-#         # Validate form inputs
-#         if not product_id or not quantity_sold or not price:
-#             flash('Please fill in all fields', 'error')
-#             return redirect(url_for('record_sale'))
-        
-#         # Validate stock
-#         product = Product.query.get_or_404(product_id)
-
-#         if product.stock >= quantity_sold:
-#             sale = Sale(product_id=product_id, quantity_sold=quantity_sold, date=date, price=price)
-#             product.stock -= quantity_sold  # Update stock
-#             db.session.add(sale)
-#             db.session.add(product)  # Make sure updated product is added
-#             db.session.commit()
-#         else:
-#             flash('Insufficient stock!', 'error')
-#             return redirect(url_for('record_sale'))
-
-#         flash('Sale recorded successfully!', 'success')
-#         return redirect(url_for('stock_balance'))
-
-#     products = Product.query.all()
-#     return render_template('admin/record_sale.html', products=products)
 
 @app.route('/stock-balance')
 def stock_balance():

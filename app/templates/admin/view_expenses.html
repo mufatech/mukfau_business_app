@@ -1,107 +1,95 @@
 {% extends 'admin/base.html' %}
 
 {% block content %}
-
 <div class="app-wrapper">
-
-<div class="app-content pt-3 p-md-3 p-lg-4">
-    <div class="container-xl">
-        
-        <div class="row g-3 mb-4 align-items-center justify-content-between">
-            <div class="col-auto">
-                <h1 class="app-page-title mb-0">View Expenses</h1>
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="container-xl">
+            <div class="row g-3 mb-4 align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="app-page-title mb-0">View Expenses</h1>
+                </div>
             </div>
-            <div class="col-auto">
-                 <div class="page-utilities">
-                </div><!--//table-utilities-->
-            </div><!--//col-auto-->
-        </div><!--//row-->
-       
-        <form method="GET" action="{{ url_for('view_expenses') }}">
-            <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
-            <label for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
-            <button type="submit">Filter</button>
-        </form>
-        <div class="tab-content" id="orders-table-tab-content">
-            <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
-                <div class="app-card app-card-orders-table shadow-sm mb-5">
-                    <div class="app-card-body">
-                        <div class="table-responsive">
-                            {% if expenses %}
-                            <table class="table app-table-hover mb-0 text-left">
-                                <thead>
-                                    <tr>
-                                        <th class="cell">Date</th>
-                                        <th class="cell">Amount</th>
-                                        <th class="cell">Purpose</th>
-                                        <th class="cell">Product</th>
-                                       
-                                        
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for expense in expenses %}
-                                    <tr>
-                                        <td class="cell">{{ expense.date  }}</td>
-                                        <td class="cell">{{ expense.amount}} </td>
-                                        <td class="cell">{{ expense.purpose }}</td>
-                                        <td class="cell">{{ expense.product.name if expense.product else 'N/A' }}</td>  
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% else %} <p>No expenses recorded yet.</p> {% endif %}
-                        </div><!--//table-responsive-->
-                       
-                    </div><!--//app-card-body-->		
-                </div><!--//app-card-->
+            
+            <!-- Filter Form -->
+            <form method="GET" action="{{ url_for('view_expenses') }}">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
 
-                <hr>
-                <h2>Total Expenses Value: N{{ "%.2f"|format(total_expenses_value) }}</h2>
+            <div class="tab-content" id="orders-table-tab-content">
+                <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+                    <div class="app-card app-card-orders-table shadow-sm mb-5">
+                        <div class="app-card-body">
+                            <div class="table-responsive">
+                                {% if expenses %}
+                                <table class="table app-table-hover mb-0 text-left">
+                                    <thead>
+                                        <tr>
+                                            <th class="cell">Date</th>
+                                            <th class="cell">Amount</th>
+                                            <th class="cell">Purpose</th>
+                                            <th class="cell">Product</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for expense in expenses %}
+                                        <tr>
+                                            <td class="cell">{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                                            <td class="cell">₦{{ expense.amount | round(2) }}</td>
+                                            <td class="cell">{{ expense.purpose }}</td>
+                                            <td class="cell">{{ expense.product.name if expense.product else 'N/A' }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                    <p class="text-muted">No expenses have been recorded for the selected period.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <h2>Total Expenses Value: ₦{{ total_expenses_value | round(2) }}</h2>
 
-                <nav class="app-pagination">
-                    <ul class="pagination justify-content-center">
-                        <!-- Previous Button -->
-                        <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
-                            <a class="page-link" href="{{ url_for('view_expenses', page=pagination.page - 1) }}" {% if pagination.page == 1 %}tabindex="-1" aria-disabled="true"{% endif %}>Previous</a>
-                        </li>
-
-                        <!-- Page Numbers -->
-                        {% for p in pagination.iter_pages() %}
-                        <li class="page-item {% if p == pagination.page %}active{% endif %}">
-                            <a class="page-link" href="{{ url_for('view_expenses', page=p, start_date=start_date, end_date=end_date) }}">{{ p }}</a>
-                        </li>
-                        {% endfor %}
-
-                        <!-- Next Button -->
-                        <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
-                            <a class="page-link" href="{{ url_for('view_expenses', page=pagination.page + 1) }}" {% if pagination.page == pagination.pages %}tabindex="-1" aria-disabled="true"{% endif %}>Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div><!--//tab-pane-->
-        </div><!--//tab-content-->
-       
-    </div><!--//container-fluid-->
-</div><!--//app-content-->
-
-
+                    <!-- Pagination Controls -->
+                    <nav class="app-pagination">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                                <a class="page-link" href="{{ url_for('view_expenses', page=pagination.page - 1, start_date=start_date, end_date=end_date) }}" {% if pagination.page == 1 %}tabindex="-1" aria-disabled="true"{% endif %}>Previous</a>
+                            </li>
+                            {% for p in pagination.iter_pages() %}
+                            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('view_expenses', page=p, start_date=start_date, end_date=end_date) }}">{{ p }}</a>
+                            </li>
+                            {% endfor %}
+                            <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                                <a class="page-link" href="{{ url_for('view_expenses', page=pagination.page + 1, start_date=start_date, end_date=end_date) }}" {% if pagination.page == pagination.pages %}tabindex="-1" aria-disabled="true"{% endif %}>Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    // Get today's date in the format yyyy-mm-dd
-    const today = new Date().toISOString().split('T')[0];
+const startDateInput = document.getElementById('start_date');
+const endDateInput = document.getElementById('end_date');
 
-    // Set the max attribute for the date input fields
-    document.getElementById('start_date').max = today;
-    document.getElementById('end_date').max = today;
+// Set minimum date for end date based on selected start date
+startDateInput.addEventListener('change', function() {
+    endDateInput.min = this.value;
+});
 
-    // Optionally set the default value for end_date to today's date
-    //document.getElementById('end_date').value = today;
-    if (!document.getElementById('end_date').value) {
-    document.getElementById('end_date').value = today;
-}
+// Set maximum date for start date based on selected end date
+endDateInput.addEventListener('change', function() {
+    startDateInput.max = this.value;
+});
 </script>
 
 {% endblock %}
