@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Edit Transaction</h2>
+        <h2 class="text-center mb-4">Edit Transaction </h2>
 
         <form method="POST" action="{{ url_for('edit_transaction', transaction_id=transaction.id) }}">
             <!-- Transaction Details -->
@@ -34,15 +34,18 @@
                 </div>
                 <div class="col-md-6">
                     <label for="status" class="form-label">Status:</label>
-                    <input type="text" id="status" name="status" class="form-control" 
-                           value="{{ transaction.status }}" readonly>
+                    <select name="status" id="status" required>
+                        <option value="Pending" {% if transaction.status == "Pending" %}selected{% endif %}>Pending</option>
+                        <option value="Completed" {% if transaction.status == "Completed" %}selected{% endif %}>Completed</option>
+                    </select>
+                    <br>
                 </div>
             </div>
 
             <!-- Submit Button -->
             <div class="text-center">
                 <button type="submit" class="btn btn-success">Update Transaction</button>
-                <a href="{{ url_for('sales_page') }}" class="btn btn-secondary">Cancel</a>
+                <a href="{{ url_for('view_transactions') }}" class="btn btn-secondary">Back to Transactions</a>
             </div>
         </form>
     </div>

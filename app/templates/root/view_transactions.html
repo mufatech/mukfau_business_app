@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transactions</title>
+</head>
+<body>
+    <h1>Transactions</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Customer Name</th>
+                <th>Total Amount</th>
+                <th>Amount Paid</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.id }}</td>
+                <td>{{ transaction.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ transaction.customer.name }}</td>
+                <td>{{ transaction.total_amount }}</td>
+                <td>{{ transaction.amount_paid }}</td>
+                <td>{{ transaction.balance }}</td>
+                <td>{{ transaction.status }}</td>
+                <td>
+                    <a href="{{ url_for('edit_transaction', transaction_id=transaction.id) }}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+     <!-- Pagination Links -->
+     <div>
+        {% if transactions.has_prev %}
+            <a href="{{ url_for('view_transactions', page=transactions.prev_num) }}">Previous</a>
+        {% endif %}
+        
+        <span>Page {{ transactions.page }} of {{ transactions.pages }}</span>
+        
+        {% if transactions.has_next %}
+            <a href="{{ url_for('view_transactions', page=transactions.next_num) }}">Next</a>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+
+
+

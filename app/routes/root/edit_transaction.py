@@ -7,14 +7,19 @@ import os
 def edit_transaction(transaction_id):
     transaction = Transaction.query.get_or_404(transaction_id)
 
+    # Check if the transaction is pending
+    if transaction.status != "Pending":
+        flash("Only pending transactions can be edited.", "danger")
+        return redirect(url_for('view_transactions'))
+    
     if request.method == 'POST':
-        amount_paid = float(request.form.get('amount_paid'))
-        transaction.amount_paid = amount_paid
-        transaction.balance = transaction.total_amount - amount_paid
+        transaction.total_amount = float(request.form.get('total_amount'))
+        transaction.amount_paid = float(request.form.get('amount_paid'))
+        transaction.balance = transaction.total_amount - transaction.amount_paid
         transaction.status = "Completed" if transaction.balance == 0 else "Pending"
 
         db.session.commit()
         flash("Transaction updated successfully!", "success")
-        return redirect(url_for('sales_page'))
+        return redirect(url_for('view_transactions'))
 
-    return render_template('edit_transaction.html', transaction=transaction)
+    return render_template('root/edit_transaction.html', transaction=transaction)

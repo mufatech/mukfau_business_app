@@ -1,8 +1,6 @@
 from app import db
 from datetime import datetime
 from sqlalchemy import Enum
-# #import locale
-
 from app import db
 from datetime import datetime
 
@@ -67,10 +65,10 @@ class Sale(db.Model):
     
 class Expenses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date, default=datetime.utcnow)
+    date = db.Column(db.Date, default=datetime.utcnow().date)
     amount = db.Column(db.Float, nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=True)
 
     # product = db.relationship('Product', backref='expenses')
     def __repr__(self):
@@ -85,7 +83,7 @@ class Transaction(db.Model):
     amount_paid = db.Column(db.Float, nullable=False, default=0.0)
     balance = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), nullable=False, default="Pending")
-    transaction_ref = db.Column(db.String(50), unique=True, nullable=False)  # Unique reference
+    # transaction_ref = db.Column(db.String(50), unique=True, nullable=False)  # Unique reference
 
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)

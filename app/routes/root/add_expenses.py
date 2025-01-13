@@ -20,6 +20,10 @@ def add_expenses():
             
             # Deduct from product stock
             product.stock -= amount
+
+            if amount <= 0:
+                flash("Amount must be greater than zero.", "danger")
+                return redirect(url_for('add_expenses'))
             
             # Add expense
             expenses = Expenses(date=date, amount=amount, purpose=purpose, product_id=product_id)

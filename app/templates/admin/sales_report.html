@@ -48,7 +48,7 @@
                                             <td class="cell">{{ sale.transaction.balance }}</td>
                                             <td class="cell">{{ sale.transaction.status }}</td>
                                             <td class="cell">
-                                                <a href="{{ url_for('transaction_details', transaction_id=sale.transaction_id) }}">View Details</a>
+                                                <a href="{{ url_for('view_transactions', transaction_id=sale.transaction_id) }}">View Details</a>
                                             </td>
                                         </tr>
                                         {% else %}
