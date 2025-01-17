@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import app, db
 from app.models.product import Product, Supply, Sale, Customer, Transaction
 from datetime import datetime
+import uuid
 
 
 @app.route('/record-sale', methods=['GET', 'POST'])

@@ -48,7 +48,7 @@ class Sale(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, default=datetime.utcnow)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), unique=True, nullable=False)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id', ondelete='SET NULL'), nullable=True)
     quantity_sold = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -83,7 +83,7 @@ class Transaction(db.Model):
     amount_paid = db.Column(db.Float, nullable=False, default=0.0)
     balance = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), nullable=False, default="Pending")
-    # transaction_ref = db.Column(db.String(50), unique=True, nullable=False)  # Unique reference
+    transaction_ref = db.Column(db.String(50), unique=True, index=True, nullable=True)  # Unique reference
 
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
