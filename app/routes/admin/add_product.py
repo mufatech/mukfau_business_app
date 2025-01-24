@@ -75,9 +75,9 @@ def add_supply():
         flash('Supply added successfully!', 'success')
         return redirect(url_for('supply_report'))
         
-    # Fetch all products for the form
+        # Fetch all products for the form
     products = Product.query.all()
-    return render_template('admin/add_supply.html', products=products)
+    return render_template('admin/add_supply.html', products=products, supply_cost=supply_cost)
 
 def supply_cost(self):
         return self.quantity * self.cost_per_unit
@@ -92,13 +92,13 @@ def stock_balance():
     page = request.args.get('page', 1, type=int)
 
     # Fetch the products with pagination
-    products = Product.query.paginate(page=page, per_page=15, error_out=False)
+    paginated_products = Product.query.paginate(page=page, per_page=15, error_out=False)
 
     # Calculate stock value for all products
-    total_stock_value = sum([product.stock_value() for product in products.items])
-    return render_template('admin/stock_balance.html', products=products, total_stock_value=total_stock_value)
-
-
+    all_products = Product.query.all()  # Fetch all products (not paginated)
+    total_stock_value = sum([product.stock_value() for product in all_products])
+    return render_template('admin/stock_balance.html', products=paginated_products, total_stock_value=total_stock_value, current_page=page  # Pass current page info for conditional rendering
+    )
 
 @app.route('/profit')
 def profit():
@@ -106,6 +106,11 @@ def profit():
     # Optional filters for start and end dates
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
+
+
+    # Pagination parameters
+    page = request.args.get('page', 1, type=int)  # Current page number, default is 1
+    per_page = 30  # Number of items per page
 
     # Base query
     query = Sale.query
@@ -117,17 +122,17 @@ def profit():
         query = query.filter(Sale.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
 
     # Fetch filtered sales
-    sales = query.order_by(Sale.date.desc()).all()
+    paginated_sales = query.order_by(Sale.date.desc()).paginate(page=page, per_page=per_page)
 
-    products = Product.query.all()
+   
 
-    # Calculate profits for all sales
-    sales = Sale.query.all()
+    # Calculate profits for all paginated sales
+    #sales = Sale.query.all()
     profits = []
     total_profit = 0
-    cost_price = 0
+   
 
-    for sale in sales:
+    for sale in paginated_sales.items:
         # Get the cost per unit for the product from the Supply model
         supply = Supply.query.filter_by(product_id=sale.product_id).first()
         if supply:
@@ -143,4 +148,6 @@ def profit():
                 'profit': profit,
             })
 
-    return render_template('admin/profit.html', products=products, cost_price=cost_price, total_profit=total_profit, profits=profits)
+            products = Product.query.all()
+            
+    return render_template('admin/profit.html', products=products, total_profit=total_profit, profits=profits, pagination=paginated_sales)
