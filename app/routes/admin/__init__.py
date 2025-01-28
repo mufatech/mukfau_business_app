@@ -1,6 +1,6 @@
 from .login import admin_login
 from .admin_dashboard import admin_dashboard
-from .add_product import add_product, add_supply, stock_balance, profit, supply_cost
+from .add_product import add_product, add_supply, stock_balance, profit, supply_cost, all_profits
 from .view_sales_report import sales_report
 from .view_supply_report import supply_report
 from .edit_product import edit_product

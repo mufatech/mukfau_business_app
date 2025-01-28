@@ -122,6 +122,7 @@ def profit():
         query = query.filter(Sale.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
 
     # Fetch filtered sales
+    #sales = query.order_by(Sale.date.desc()).all()
     paginated_sales = query.order_by(Sale.date.desc()).paginate(page=page, per_page=per_page)
 
    
@@ -151,3 +152,49 @@ def profit():
             products = Product.query.all()
             
     return render_template('admin/profit.html', products=products, total_profit=total_profit, profits=profits, pagination=paginated_sales)
+
+
+
+@app.route('/all-profits')
+def all_profits():
+    # Optional filters for start and end dates
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    # Base query to fetch all sales
+    query = Sale.query
+
+    # Apply date filters if provided
+    if start_date:
+        query = query.filter(Sale.date >= datetime.strptime(start_date, '%Y-%m-%d').date())
+    if end_date:
+        query = query.filter(Sale.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
+
+    # Fetch all sales based on the query
+    sales = query.order_by(Sale.date.desc()).all()
+
+    # Initialize profit calculations
+    profits = []
+    total_profit = 0
+
+    for sale in sales:
+        # Fetch the corresponding product cost from the Supply table
+        supply = Supply.query.filter_by(product_id=sale.product_id).first()
+        if supply:
+            cost_price = supply.cost_per_unit
+            profit = (sale.price - supply.cost_per_unit) * sale.quantity_sold
+            total_profit += profit
+            profits.append({
+                'date': sale.date,
+                'product': sale.product.name,  # Assuming a 'name' field exists in the Product model
+                'quantity_sold': sale.quantity_sold,
+                'selling_price': sale.price,
+                'cost_price': supply.cost_per_unit,
+                'profit': profit,
+            })
+
+    return render_template(
+        'admin/all_profits.html',
+        profits=profits,
+        total_profit=total_profit
+    )
