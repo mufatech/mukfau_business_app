@@ -11,7 +11,7 @@ def index():
 def add_product():
     if request.method == 'POST':
         name = request.form['name']
-        price = float(request.form['price'])
+        #price = float(request.form['price'])
         description = request.form.get('description', '')
 
         # Check if the product already exists
