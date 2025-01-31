@@ -37,8 +37,8 @@ def add_expenses():
             product.stock -= amount
 
             # Add expense
-            expense = Expenses(date=date, amount=amount, purpose=purpose, product_id=product_id)
-            db.session.add(expense)
+            expenses = Expenses(date=date, amount=amount, purpose=purpose, product_id=product_id)
+            db.session.add(expenses)
             db.session.commit()
 
             flash("Expense recorded successfully!", "success")
@@ -53,4 +53,4 @@ def add_expenses():
     # GET request: Render the form
     products = Product.query.all()
     today = datetime.utcnow().strftime('%Y-%m-%d')
-    return render_template('root/expenses.html', products=products, today=today)
+    return render_template('root/expenses.html', products=products, today=today, expenses=expenses)

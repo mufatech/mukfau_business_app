@@ -23,6 +23,9 @@ def view_expenses():
     # Calculate the total expenses
     total_expenses_value = sum(expense.amount for expense in expenses_paginated.items)
 
+    app.logger.info(f"Expenses retrieved: {[expense.id for expense in expenses_paginated.items]}")
+
+
     return render_template(
         'admin/view_expenses.html', 
         expenses=expenses_paginated.items,  # Pass the list of expenses

@@ -12,7 +12,7 @@ class Product(db.Model):
     stock = db.Column(db.Integer, default=0)
 
     supplies = db.relationship('Supply', back_populates='product', lazy='dynamic')
-    expenses = db.relationship('Expenses', backref='product', lazy=True)
+    expenses = db.relationship('Expenses', back_populates='product')
 
     def total_expenses_value(self):
         # This method calculates the total expenses for this product
@@ -69,8 +69,8 @@ class Expenses(db.Model):
     amount = db.Column(db.Float, nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-
-    # product = db.relationship('Product', backref='expenses')
+    product = db.relationship('Product', back_populates='expenses')
+    #product = db.relationship('Product', backref='expenses')
     def __repr__(self):
         return f'<Expense {self.id} - {self.purpose}>'
     

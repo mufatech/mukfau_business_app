@@ -15,7 +15,24 @@
             <!-- Transaction Details -->
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="total_amount" class="form-label">Total Amount:</label>
+                    <label for="customer_name" class="form-label">Customer Name:</label>
+                    <input type="number" id="customer_name" name="customer_name" class="form-control" 
+                           value="{{ transaction.customer_id }}" readonly>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="product_id" class="form-label">Product:</label>
+                    <select name="product_id" required>
+                        {% for product in products %}
+                            <option value="{{ product.id }}" {% if product.id == transaction.product_id %}selected{% endif %}>
+                                {{ product.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+                <div class="col-md-6">
+                    <label for="customer_name" class="form-label">Total Amount:</label>
                     <input type="number" id="total_amount" name="total_amount" class="form-control" 
                            value="{{ transaction.total_amount }}" readonly>
                 </div>

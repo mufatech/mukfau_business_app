@@ -1,0 +1,53 @@
+<div class="container">
+    <!-- Display total profit at the top of the first page -->
+    {% if pagination.page == 1 %}
+        <div class="alert alert-info">
+            <h4>Total Profit: {{ total_profit }}</h4>
+        </div>
+    {% endif %}
+
+    <!-- Table of profits -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="cell">Date</th>
+                <th class="cell">Product</th>
+                <th class="cell">Quantity Sold</th>
+                <th class="cell">Selling Price</th>
+                <th class="cell">Cost Price</th>
+                <th class="cell">Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profit in profits %}
+                <tr>
+                    <td class="cell">{{ profit.date }}</td>
+                    <td class="cell">{{ profit.product.name }}</td>
+                    <td class="cell">{{ profit.quantity_sold }}</td>
+                    <td class="cell">{{ profit.selling_price }}</td>
+                    <td class="cell">{{ profit.cost_price }}</td>
+                    <td class="cell">{{ profit.profit }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <nav>
+        <ul class="pagination">
+            {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pagination.prev_num }}">Previous</a>
+                </li>
+            {% endif %}
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ pagination.page }} of {{ pagination.pages }}</span>
+            </li>
+            {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pagination.next_num }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>

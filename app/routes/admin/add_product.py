@@ -161,6 +161,10 @@ def all_profits():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
 
+    # Pagination parameters
+    page = request.args.get('page', 1, type=int)  # Current page number, default is 1
+    per_page = 20  # Number of items per page
+
     # Base query to fetch all sales
     query = Sale.query
 
@@ -171,30 +175,45 @@ def all_profits():
         query = query.filter(Sale.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
 
     # Fetch all sales based on the query
-    sales = query.order_by(Sale.date.desc()).all()
+    all_sales = query.order_by(Sale.date.desc()).all()
+    #paginated_sales = query.order_by(Sale.date.desc()).all()
 
     # Initialize profit calculations
-    profits = []
+    #profits = []
     total_profit = 0
 
-    for sale in sales:
+    for sale in all_sales:
         # Fetch the corresponding product cost from the Supply table
         supply = Supply.query.filter_by(product_id=sale.product_id).first()
         if supply:
-            cost_price = supply.cost_per_unit
+            #cost_price = supply.cost_per_unit
+            total_profit += (sale.price - supply.cost_per_unit) * sale.quantity_sold
+            #total_profit += profit
+
+    # Fetch paginated sales for display
+    paginated_sales = query.order_by(Sale.date.desc()).paginate(page=page, per_page=per_page)     
+            # Calculate profits for the current page's sales
+    profits = []
+    for sale in paginated_sales.items:
+        supply = Supply.query.filter_by(product_id=sale.product_id).first()
+        if supply:
             profit = (sale.price - supply.cost_per_unit) * sale.quantity_sold
-            total_profit += profit
             profits.append({
                 'date': sale.date,
-                'product': sale.product.name,  # Assuming a 'name' field exists in the Product model
+                'product': sale.product,
                 'quantity_sold': sale.quantity_sold,
                 'selling_price': sale.price,
                 'cost_price': supply.cost_per_unit,
                 'profit': profit,
             })
 
+    products = Product.query.all()
+
     return render_template(
         'admin/all_profits.html',
-        profits=profits,
-        total_profit=total_profit
+        products=products,
+        total_profit=total_profit,  # Total profit across all pages
+        profits=profits,           # Profits for the current page's sales
+        pagination=paginated_sales  # Pagination object
+
     )
