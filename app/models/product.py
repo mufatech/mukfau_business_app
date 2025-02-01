@@ -7,7 +7,7 @@ from datetime import datetime
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    #price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=False)
     stock = db.Column(db.Integer, default=0)
 
@@ -70,9 +70,9 @@ class Expenses(db.Model):
     purpose = db.Column(db.String(255), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     product = db.relationship('Product', back_populates='expenses')
-    #product = db.relationship('Product', backref='expenses')
+    product = db.relationship('Product', backref='expense_records')
     def __repr__(self):
-        return f'<Expense {self.id} - {self.purpose}>'
+        return f'<Expense {self.purpose} - {self.amount}>'
     
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -11,7 +11,7 @@ def index():
 def add_product():
     if request.method == 'POST':
         name = request.form['name']
-        #price = float(request.form['price'])
+        price = float(request.form['price'])
         description = request.form.get('description', '')
 
         # Check if the product already exists
@@ -59,7 +59,7 @@ def add_supply():
         cost_per_unit = float(cost_per_unit) if cost_per_unit and cost_per_unit.replace('.', '', 1).isdigit() else 0.0
 
         # Calculate supply cost
-        supply_cost = quantity * cost_per_unit
+        #supply_cost = quantity * cost_per_unit
         
         # Get the product and update stock
         product = Product.query.get_or_404(product_id)
@@ -77,7 +77,7 @@ def add_supply():
         
         # Fetch all products for the form
     products = Product.query.all()
-    return render_template('admin/add_supply.html', products=products, supply_cost=supply_cost)
+    return render_template('admin/add_supply.html', products=products)
 
 def supply_cost(self):
         return self.quantity * self.cost_per_unit

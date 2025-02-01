@@ -5,6 +5,8 @@ from datetime import datetime
 
 @app.route('/add-expenses', methods=['GET', 'POST'])
 def add_expenses():
+    expenses = []  # Ensure expenses is always defined
+
     if request.method == 'POST':
         try:
             # Get form data
@@ -13,7 +15,7 @@ def add_expenses():
             product_id = request.form.get('product_id')
             amount = float(request.form.get('amount'))
             purpose = request.form.get('purpose')
-            
+
             # Validate inputs
             if not purpose or not product_id:
                 flash("All fields are required.", "danger")
@@ -37,20 +39,22 @@ def add_expenses():
             product.stock -= amount
 
             # Add expense
-            expenses = Expenses(date=date, amount=amount, purpose=purpose, product_id=product_id)
-            db.session.add(expenses)
+            new_expense = Expenses(date=date, amount=amount, purpose=purpose, product_id=product_id)
+            db.session.add(new_expense)
             db.session.commit()
 
             flash("Expense recorded successfully!", "success")
             return redirect(url_for('add_expenses'))
 
-        except ValueError as e:
+        except ValueError:
             flash("Invalid input. Please check your data.", "danger")
         except Exception as e:
             app.logger.error(f"Error adding expense: {str(e)}")
             flash("An unexpected error occurred. Please try again.", "danger")
 
-    # GET request: Render the form
+    # GET request: Fetch existing expenses
+    expenses = Expenses.query.order_by(Expenses.date.desc()).all()
     products = Product.query.all()
     today = datetime.utcnow().strftime('%Y-%m-%d')
+
     return render_template('root/expenses.html', products=products, today=today, expenses=expenses)
