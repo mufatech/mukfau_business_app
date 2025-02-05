@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import app, db
-from app.models.product import Product, Supply, Sale
+from app.models.product import Product, Supply, Sale, Transaction
 from datetime import datetime
 
 @app.route('/')
@@ -85,6 +85,12 @@ def supply_cost(self):
 
 @app.route('/stock-balance')
 def stock_balance():
+    # Total sales value (sum of all sales)
+    total_sales_value = db.session.query(db.func.sum(Transaction.total_amount)).scalar() or 0.0
+
+    # Total balance to be paid (sum of all unpaid balances)
+    total_pending_balance = db.session.query(db.func.sum(Transaction.balance)).filter(Transaction.status == "Pending").scalar() or 0.0
+
     products = Product.query.all()
     #sale = Sale.query.all()
 
@@ -97,7 +103,9 @@ def stock_balance():
     # Calculate stock value for all products
     all_products = Product.query.all()  # Fetch all products (not paginated)
     total_stock_value = sum([product.stock_value() for product in all_products])
-    return render_template('admin/stock_balance.html', products=paginated_products, total_stock_value=total_stock_value, current_page=page  # Pass current page info for conditional rendering
+    return render_template('admin/stock_balance.html', products=paginated_products, total_stock_value=total_stock_value, current_page=page,
+        total_sales_value=total_sales_value,
+        total_pending_balance=total_pending_balance # Pass current page info for conditional rendering
     )
 
 @app.route('/profit')

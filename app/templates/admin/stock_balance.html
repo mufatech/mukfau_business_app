@@ -15,7 +15,13 @@
              <!-- Display total stock value at the top only on the first page -->
         {% if current_page == 1 %}
             <div class="alert alert-info">
-                <h4>Total Stock Value: {{ total_stock_value }}</h4>
+                <h4><strong> Stock Value:</strong> N{{ total_stock_value }}</h4>
+            </div>
+            <div class="alert alert-info">
+                <h4><strong>Total Sales Value:</strong> N{{ total_sales_value }}</h4>
+            </div>
+            <div class="alert alert-info">
+                <h4><strong>Total Pending Balance:</strong>N{{ total_pending_balance }}</h4>
             </div>
         {% endif %}
 

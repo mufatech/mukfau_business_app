@@ -19,6 +19,11 @@ def record_sale():
         if not customer_name or not product_ids or not quantities_sold or not prices or not amount_paid_str:
             flash("All fields are required!", "error")
             return redirect(url_for('record_sale'))
+        
+        # Check if required fields are provided
+        if not customer_name or not product_ids or not quantities_sold or not prices or not amount_paid_str:
+            flash("All fields are required!", "error")
+            return redirect(url_for('record_sale'))
 
         try:
             amount_paid = float(amount_paid_str)
@@ -46,6 +51,12 @@ def record_sale():
         if existing_transaction:
             flash('Duplicate transaction detected. Sale not recorded.', 'error')
             return redirect(url_for('record_sale'))
+        
+        # Check for existing sales within this transaction
+        existing_sales = set(
+            (sale.product_id, sale.transaction_id)
+            for sale in Sale.query.filter(Sale.transaction_id == existing_transaction.id).all()
+        )
 
         # **🔹 Stock Validation: Ensure all products have enough stock before modifying stock**
         for product_id, quantity_sold in zip(product_ids, quantities_sold):
@@ -72,6 +83,12 @@ def record_sale():
             product = Product.query.get(int(product_id))
             quantity_sold = float(quantity_sold)
             price = float(price)
+
+            if (product_id, transaction.id) in existing_sales:
+                    flash(f"Duplicate sale detected for product ID {product_id} in this transaction!", "error")
+                    continue  # Skip this sale but allow others
+
+            product = Product.query.get(product_id)
 
             sale = Sale(
                 customer_id=customer.id,

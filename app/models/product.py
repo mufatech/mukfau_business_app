@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import Enum
 from app import db
 from datetime import datetime
+from sqlalchemy import UniqueConstraint
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,7 +63,9 @@ class Sale(db.Model):
     transaction = db.relationship('Transaction', backref='sales')
     product = db.relationship('Product', backref='sales')
 
-    
+    # Ensure no duplicate transaction-product pair
+    __table_args__ = (UniqueConstraint('transaction_id', 'product_id', name='unique_transaction_product'),)
+
 class Expenses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, default=datetime.utcnow().date)
