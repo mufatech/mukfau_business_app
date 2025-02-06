@@ -52,12 +52,6 @@ def record_sale():
             flash('Duplicate transaction detected. Sale not recorded.', 'error')
             return redirect(url_for('record_sale'))
         
-        # Check for existing sales within this transaction
-        existing_sales = set(
-            (sale.product_id, sale.transaction_id)
-            for sale in Sale.query.filter(Sale.transaction_id == existing_transaction.id).all()
-        )
-
         # **🔹 Stock Validation: Ensure all products have enough stock before modifying stock**
         for product_id, quantity_sold in zip(product_ids, quantities_sold):
             product = Product.query.get(int(product_id))
@@ -77,6 +71,12 @@ def record_sale():
         )
         db.session.add(transaction)
         db.session.commit()
+
+        # Check for existing sales within this transaction
+        existing_sales = set(
+            (sale.product_id, sale.transaction_id)
+            for sale in Sale.query.filter(Sale.customer_id == customer.id).all()
+        )
 
         # **🔹 Deduct stock after validation**
         for product_id, quantity_sold, price in zip(product_ids, quantities_sold, prices):
