@@ -21,7 +21,7 @@ def sales_report():
 
     # Pagination parameters
     page = request.args.get('page', 1, type=int)  # Default to page 1 if no page is specified
-    per_page = 10  # Number of items per page (you can adjust this)
+    per_page = 20  # Number of items per page (you can adjust this)
 
     # Fetch paginated sales
     # sales_page = query.order_by(Sale.date.desc()).paginate(page, per_page, False)
@@ -42,3 +42,5 @@ def sales_report():
     # Pass the sales data and date filters to the template
     return render_template('admin/sales_report.html', sales=sales_page.items, start_date=start_date, end_date=end_date, total_stock_value=total_stock_value, transaction=sales_page.items[0].transaction if sales_page.items else None,  # Example for first sale transaction
         pagination=sales_page)
+
+    

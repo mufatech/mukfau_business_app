@@ -98,7 +98,7 @@ def stock_balance():
     page = request.args.get('page', 1, type=int)
 
     # Fetch the products with pagination
-    paginated_products = Product.query.paginate(page=page, per_page=15, error_out=False)
+    paginated_products = Product.query.paginate(page=page, per_page=20, error_out=False)
 
     # Calculate stock value for all products
     all_products = Product.query.all()  # Fetch all products (not paginated)
