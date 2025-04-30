@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import app, db
-from app.models.product import Product, Supply, Sale, Transaction
+from app.models.product import Product, Supply, Sale, Transaction, ProductSupply, ProductSupplyForm
 from datetime import datetime
 
 @app.route('/')
@@ -225,3 +225,40 @@ def all_profits():
         pagination=paginated_sales  # Pagination object
 
     )
+
+from flask import render_template, request, redirect, url_for, flash
+from datetime import datetime
+
+@app.route('/add_product_supply', methods=['GET', 'POST'])
+def add_product_supply():
+    if request.method == 'POST':
+        product_id = request.form.get('product_id')
+        cost_price = float(request.form.get('cost_price'))
+        selling_price = float(request.form.get('selling_price'))
+        quantity_in_bags = float(request.form.get('quantity_in_bags'))
+        supply_date = request.form.get('supply_date')
+
+        # Compute derived values
+        total_cost = cost_price * quantity_in_bags
+        total_revenue = selling_price * quantity_in_bags
+        profit = total_revenue - total_cost
+
+        new_supply = ProductSupply(
+            product_id=product_id,
+            cost_price=cost_price,
+            selling_price=selling_price,
+            quantity_in_bags=quantity_in_bags,
+            supply_date=datetime.strptime(supply_date, "%Y-%m-%d"),
+            total_cost=total_cost,
+            total_revenue=total_revenue,
+            profit=profit
+        )
+        db.session.add(new_supply)
+        db.session.commit()
+
+        flash('Product supply added successfully.', 'success')
+        return redirect(url_for('product_supplies'))
+
+    products = Product.query.all()
+    return render_template('admin/add_product_supply.html', products=products)
+

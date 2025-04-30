@@ -1,0 +1,32 @@
+<h2>Edit Product Supply</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <p>
+        {{ form.product_id.label }}<br>
+        {{ form.product_id() }}
+    </p>
+
+    <p>
+        {{ form.cost_price.label }}<br>
+        {{ form.cost_price() }}
+    </p>
+
+    <p>
+        {{ form.selling_price.label }}<br>
+        {{ form.selling_price() }}
+    </p>
+
+    <p>
+        {{ form.quantity_in_bags.label }}<br>
+        {{ form.quantity_in_bags() }}
+    </p>
+
+    <p>
+        {{ form.supply_date.label }}<br>
+        {{ form.supply_date() }}
+    </p>
+
+    <p>{{ form.submit(value='Update Supply') }}</p>
+</form>
