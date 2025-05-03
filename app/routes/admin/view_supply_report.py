@@ -30,9 +30,9 @@ def supply_report():
     # Fetch filtered supplies
     supplies = query.order_by(Supply.date.desc()).all()
     for supply in supplies:
-        supply.supply_cost = supply.supply_cost or 0
+    # Ensure values are not None (optional if DB constraints are correct)
+        supply.quantity = supply.quantity or 0
         supply.cost_per_unit = supply.cost_per_unit or 0
-        
     products = Product.query.all()
     total_stock_value = sum([product.stock_value() for product in products])
     
@@ -40,33 +40,7 @@ def supply_report():
 
 
 
-@app.route('/edit_product_supply/<int:supply_id>', methods=['GET', 'POST'])
-def edit_product_supply(supply_id):
-    supply = ProductSupply.query.get_or_404(supply_id)
-    form = ProductSupplyForm(obj=supply)
 
-    # Repopulate dropdown
-    form.product_id.choices = [(product.id, product.name) for product in Product.query.all()]
-
-    if form.validate_on_submit():
-        supply.product_id = form.product_id.data
-        supply.cost_price = form.cost_price.data
-        supply.selling_price = form.selling_price.data
-        supply.quantity_in_bags = form.quantity_in_bags.data
-        supply.supply_date = form.supply_date.data
-
-        db.session.commit()
-        return redirect(url_for('product_supplies'))
-
-    return render_template('admin/edit_product_supply.html', form=form, supply=supply)
-
-
-@app.route('/delete_product_supply/<int:supply_id>', methods=['GET', 'POST'])
-def delete_product_supply(supply_id):
-    supply = ProductSupply.query.get_or_404(supply_id)
-    db.session.delete(supply)
-    db.session.commit()
-    return redirect(url_for('product_supplies'))
 
 
 

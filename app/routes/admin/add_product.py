@@ -2,6 +2,10 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app import app, db
 from app.models.product import Product, Supply, Sale, Transaction, ProductSupply, ProductSupplyForm
 from datetime import datetime
+from sqlalchemy import func, and_
+from sqlalchemy.orm import aliased
+
+
 
 @app.route('/')
 def index():
@@ -11,7 +15,7 @@ def index():
 def add_product():
     if request.method == 'POST':
         name = request.form['name']
-        price = float(request.form['price'])
+        # price = float(request.form['price'])
         description = request.form.get('description', '')
 
         # Check if the product already exists
@@ -21,17 +25,27 @@ def add_product():
             return redirect(url_for('add_product'))
 
         # Add the new product
-        product = Product(name=name, price=price, description=description)
+        product = Product(name=name,  description=description)
         db.session.add(product)
+        db.session.commit()
+
+         # Set all NULL stock values to 0.0
+        Product.query.filter(Product.stock == None).update({Product.stock: 0.0})
         db.session.commit()
 
          # Now create the corresponding supply entry
         supply_quantity = float(request.form.get('quantity', '0.0'))  # Assume this is the initial quantity
+        cost_per_unit = float(request.form.get('cost_per_unit', '0.0'))
 
         supply = Supply(
             product_id=product.id,  # Link supply to the created product
-            quantity=supply_quantity
+            quantity=supply_quantity,
+            cost_per_unit=cost_per_unit,
+            date=datetime.utcnow().date()
         )
+
+        db.session.add(supply)  # ✅ Save to DB
+        db.session.commit()
 
 
         flash('Product added successfully!', 'success')
@@ -58,15 +72,16 @@ def add_supply():
         quantity = float(quantity) if quantity and quantity.replace('.', '', 1).isdigit() else 0.0
         cost_per_unit = float(cost_per_unit) if cost_per_unit and cost_per_unit.replace('.', '', 1).isdigit() else 0.0
 
-        # Calculate supply cost
+        #Calculate supply cost
         #supply_cost = quantity * cost_per_unit
         
         # Get the product and update stock
         product = Product.query.get_or_404(product_id)
+        product.stock = product.stock or 0.0  # Fallback in case it's None
         product.stock += quantity  # Update stock
 
         # Create the supply record
-        supply = Supply(product_id=product_id, quantity=quantity, cost_per_unit=product.price, date=date)
+        supply = Supply(product_id=product_id, quantity=quantity, cost_per_unit=cost_per_unit, date=date)
         
         # Add and commit the supply record
         db.session.add(supply)
@@ -102,7 +117,11 @@ def stock_balance():
 
     # Calculate stock value for all products
     all_products = Product.query.all()  # Fetch all products (not paginated)
-    total_stock_value = sum([product.stock_value() for product in all_products])
+    total_stock_value = sum(
+        (product.latest_cost_per_unit or 0.0) * (product.stock or 0.0)
+        for product in products
+    )
+    # total_stock_value = sum([product.stock_value() for product in all_products])
     return render_template('admin/stock_balance.html', products=paginated_products, total_stock_value=total_stock_value, current_page=page,
         total_sales_value=total_sales_value,
         total_pending_balance=total_pending_balance # Pass current page info for conditional rendering
@@ -226,8 +245,6 @@ def all_profits():
 
     )
 
-from flask import render_template, request, redirect, url_for, flash
-from datetime import datetime
 
 @app.route('/add_product_supply', methods=['GET', 'POST'])
 def add_product_supply():

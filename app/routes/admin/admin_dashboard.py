@@ -14,7 +14,12 @@ def admin_dashboard():
     # Calculate total revenue and supply costs (if applicable)
     
     total_revenue = db.session.query(db.func.sum(Sale.sale_value)).scalar() or 0
-    total_supply_cost = db.session.query(db.func.sum(Supply.supply_cost)).scalar() or 0
+    # Corrected: compute in Python
+    total_supply_cost = sum(
+        (s.quantity or 0) * (s.cost_per_unit or 0)
+        for s in Supply.query.all()
+    )
+    #total_supply_cost = db.session.query(db.func.sum(Supply.supply_cost)).scalar() or 0
 
     # Pass the data to the template
     return render_template(

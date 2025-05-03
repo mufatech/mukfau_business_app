@@ -11,12 +11,13 @@ from sqlalchemy import UniqueConstraint
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    # price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    stock = db.Column(db.Integer, default=0)
+    stock = db.Column(db.Float, default=0.0, nullable=False)
 
     supplies = db.relationship('Supply', back_populates='product', lazy='dynamic')
     expenses = db.relationship('Expenses', back_populates='product')
+
 
     def total_expenses_value(self):
         # This method calculates the total expenses for this product
@@ -24,11 +25,25 @@ class Product(db.Model):
     
     @property
     def latest_cost_per_unit(self):
-        latest_supply = db.session.query(Supply).filter(Supply.product_id == self.id).order_by(Supply.date.desc()).first()
-        return latest_supply.cost_per_unit if latest_supply else 0.0
+        latest_supply = Supply.query.filter_by(product_id=self.id).order_by(Supply.date.desc()).first()
+        #latest_supply = db.session.query(Supply).filter(Supply.product_id == self.id).order_by(Supply.date.desc()).first()
+        return float(latest_supply.cost_per_unit) if latest_supply and latest_supply.cost_per_unit else 0.0
 
+    @property
+    def price(self):
+        return self.latest_cost_per_unit
+    # # Method to calculate stock value from latest supply cost
+    # def stock_value(self):
+    #     latest_supply = ProductSupply.query.filter_by(product_id=self.id).order_by(ProductSupply.supply_date.desc()).first()
+    #     if latest_supply:
+    #         return self.stock * self.cost_price
+       
     def stock_value(self):
-        return self.stock * self.price
+        return float(self.stock or 0.0) * float(self.latest_cost_per_unit or 0.0)
+        
+    # stock = self.stock if self.stock is not None else 0.0
+    #     cost = self.latest_cost_per_unit if self.latest_cost_per_unit is not None else 0.0
+    #     return stock * cost
 
     def __str__(self):
         return self.name
@@ -43,8 +58,15 @@ class Supply(db.Model):
 
     product = db.relationship('Product', back_populates='supplies')
 
-    supply_cost = db.Column(db.Float)
 
+    @property
+    def supply_cost(self):
+        return self.quantity * self.cost_per_unit
+    # supply_cost = db.Column(db.Float)
+
+    # stock = db.Column(db.Integer, default=0)
+
+    
     def __str__(self):
         return f"Supply(id={self.id}, product_id={self.product_id}, quantity={self.quantity})"
 
@@ -76,7 +98,7 @@ class Expenses(db.Model):
     purpose = db.Column(db.String(255), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     product = db.relationship('Product', back_populates='expenses')
-    product = db.relationship('Product', backref='expense_records')
+    #product = db.relationship('Product', backref='expense_records')
     def __repr__(self):
         return f'<Expense {self.purpose} - {self.amount}>'
     

@@ -55,10 +55,9 @@
                                     {% for product in products %}
                                     <tr>
                                         <td class="cell">{{ product.name }}</span></td>
-                                        <td class="cell">{{  "%.2f"|format(product.price) }} </td>
+                                        <td class="cell">{{ "%.2f"|format(product.latest_cost_per_unit or 0) }} </td>
                                         <td class="cell">{{ product.stock }}</td>
-                                        <!-- <td class="cell">{{ product.quantity_sold }}</td> -->
-                                        <td class="cell">N{{ "%.2f"|format(product.stock_value()) }}</td>
+                                        <td class="cell"> N{{ "%.2f"|format((product.stock or 0)  * (product.latest_cost_per_unit or 0)) }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>

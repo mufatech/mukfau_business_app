@@ -41,8 +41,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for product in products %}
-                                        {% for supply in product.supplies %}
+                                    {% for supply in supplies %}
                                         <tr>
                                             <td class="cell">
                                                 {% if supply.date %}
@@ -54,11 +53,7 @@
                                             <td class="cell">{{ supply.product.name }}</td>
                                             <td class="cell">{{ supply.quantity }} </td>
                                             <td class="cell">{{ supply.cost_per_unit }}</td>
-                                            <td class="cell">{% if supply.supply_cost is not none and supply.cost_per_unit is not none %}
-                                                {{ supply.supply_cost * supply.cost_per_unit }}
-                                            {% else %}
-                                                0
-                                            {% endif %}
+                                            <td class="cell">{{ "%.2f"|format(supply.supply_cost) }}
                                             </td>  <!-- Display supply cost -->
                                             <td>
                                                 <a href="{{ url_for('edit_supply', supply_id=supply.id) }}" class="btn btn-primary">Edit</a>
@@ -67,8 +62,8 @@
                                                 </form>
                                             </td>
                                         </tr>
-                                        {% endfor %}
                                     {% endfor %}
+                                    
                                 </tbody>
                             </table>
                         </div><!--//table-responsive-->
