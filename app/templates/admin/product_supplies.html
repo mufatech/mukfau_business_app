@@ -4,6 +4,12 @@
 <form method="GET" action="{{ url_for('product_supplies') }}">
     <input type="text" name="search_query" value="{{ search_query }}" placeholder="Search by Product Name">
     <input type="date" name="date_filter" value="{{ date_filter }}">
+    <select name="month_name">
+        <option value="">-- Filter by Month --</option>
+        {% for m in ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+            <option value="{{ m }}" {% if m == month_name %}selected{% endif %}>{{ m }}</option>
+        {% endfor %}
+    </select>
     <button type="submit">Search</button>
 </form>
 
@@ -36,9 +42,9 @@
             <td>{{ supply.total_revenue }}</td>
             <td>{{ supply.profit }}</td>
             <td>{{ supply.supply_date.strftime('%Y-%m-%d') }}</td>
-            <td>
+            <!-- <td>
                 <a href="{{ url_for('edit_product_supply', supply_id=supply.id) }}">Edit</a>
-            </td>
+            </td> -->
             <td>
                 <a href="{{ url_for('edit_product_supply', supply_id=supply.id) }}">Edit</a> |
                 <a href="{{ url_for('delete_product_supply', supply_id=supply.id) }}" onclick="return confirm('Are you sure you want to delete this supply?')">Delete</a>
